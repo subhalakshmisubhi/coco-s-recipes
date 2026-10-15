@@ -179,7 +179,6 @@ def login():
             session['username'] = user['username']
             session['role'] = user['role']
             
-            # Send Login Notification Email
             send_notification_email(
                 user['email'],
                 'Login Notification - Coco\'s Recipes',
@@ -212,7 +211,6 @@ def register():
             conn.commit()
             conn.close()
             
-            # Send Registration Success Email
             send_notification_email(
                 email,
                 'Registration Successful - Coco\'s Recipes',
@@ -273,7 +271,6 @@ def add_recipe():
         ''', (title, category, duration, calories, ingredients, instructions, user_id))
         conn.commit()
         
-        # Fetch user email for recipe addition notification
         cursor.execute('SELECT email FROM users WHERE id = ?', (user_id,))
         u_email = cursor.fetchone()['email']
         conn.close()
@@ -408,7 +405,6 @@ def delete_recipe(recipe_id):
         cursor.execute('DELETE FROM recipes WHERE id = ?', (recipe_id,))
         conn.commit()
         
-        # Fetch user email for recipe deletion notification
         cursor.execute('SELECT email FROM users WHERE id = ?', (session['user_id'],))
         u_email = cursor.fetchone()['email']
         
@@ -516,15 +512,15 @@ def payment(workshop_name):
         
     if request.method == 'POST':
         card_name = request.form.get('card_name', '').strip()
-        card_number = request.form.get('card_number', '').strip()
+        card_number = request.form.get('card_number', '').replace(' ', '').strip()
         expiry = request.form.get('expiry', '').strip()
         cvv = request.form.get('cvv', '').strip()
         
         if not card_name or not re.match("^[A-Za-z\s]+$", card_name):
             flash('Invalid cardholder name. Letters only.', 'danger')
             return redirect(url_for('payment', workshop_name=workshop_name))
-        if not card_number.isdigit() or len(card_number) < 13:
-            flash('Invalid card number. Numbers only.', 'danger')
+        if not card_number.isdigit() or len(card_number) != 16:
+            flash('Invalid card number. Must be exactly 16 digits.', 'danger')
             return redirect(url_for('payment', workshop_name=workshop_name))
         if not expiry or not re.match("^(0[1-9]|1[0-2])\/([0-9]{2})$", expiry):
             flash('Invalid expiry date format. Use MM/YY.', 'danger')
@@ -540,7 +536,6 @@ def payment(workshop_name):
                        (session['user_id'], workshop_name, 'Paid'))
         conn.commit()
         
-        # Fetch user email for workshop registration confirmation email
         cursor.execute('SELECT email FROM users WHERE id = ?', (session['user_id'],))
         u_email = cursor.fetchone()['email']
         conn.close()
@@ -584,7 +579,6 @@ def cancel_workshop(reg_id):
         cursor.execute('DELETE FROM workshop_registrations WHERE id = ?', (reg_id,))
         conn.commit()
         
-        # Fetch user email for cancellation confirmation email
         cursor.execute('SELECT email FROM users WHERE id = ?', (session['user_id'],))
         u_email = cursor.fetchone()['email']
         
