@@ -11,13 +11,13 @@
                     <input type="text" name="card_name" class="form-control" onkeypress="return event.charCode >= 65 && event.charCode <= 90 || event.charCode >= 97 && event.charCode <= 122 || event.charCode == 32" placeholder="Subhalakshmi" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Card Number (Numbers only)</label>
-                    <input type="text" name="card_number" class="form-control" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="1234567890123456" maxlength="19" required>
+                    <label class="form-label">Card Number (16 digits with spaces)</label>
+                    <input type="text" id="card_number" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Expiry Date (MM/YY)</label>
-                        <input type="text" name="expiry" class="form-control" placeholder="MM/YY" maxlength="5" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 47" required>
+                        <input type="text" id="expiry" name="expiry" class="form-control" placeholder="MM/YY" maxlength="5" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">CVV (Numbers only)</label>
@@ -29,4 +29,23 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Auto-format Card Number with spaces every 4 digits
+    document.getElementById('card_number').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '').substring(0, 16);
+        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || '';
+        e.target.value = formattedValue;
+    });
+
+    // Auto-format Expiry Date with '/' automatically
+    document.getElementById('expiry').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        if (value.length >= 3) {
+            e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        } else {
+            e.target.value = value;
+        }
+    });
+</script>
 {% endblock %}
