@@ -522,7 +522,7 @@ def payment(workshop_name):
         if not card_number.isdigit() or len(card_number) != 16:
             flash('Invalid card number. Must be exactly 16 digits.', 'danger')
             return redirect(url_for('payment', workshop_name=workshop_name))
-        if not expiry or not re.match("^(0[1-9]|1[0-2])\/([0-9]{2})$", expiry):
+        if not expiry or not re.match(r"^(0[1-9]|1[0-2])\/([0-9]{2})$", expiry):
             flash('Invalid expiry date format. Use MM/YY.', 'danger')
             return redirect(url_for('payment', workshop_name=workshop_name))
         if not cvv.isdigit() or len(cvv) not in [3, 4]:
