@@ -23,9 +23,6 @@ app.config['MAIL_USERNAME'] = 'subhalakshmisubhi@gmail.com'
 app.config['MAIL_PASSWORD'] = 'ejdnianfomiliulm'
 mail = Mail(app)
 
-with app.app_context():
-    db.create_all()
-
 def send_notification_email(recipient_email, subject, body):
     """Helper function to safely dispatch emails without blocking app execution"""
     try:
